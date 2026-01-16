@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#26619C">
+    <title>Habits</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- iOS App Icon -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%2326619C%22 rx=%2220%22/><text x=%2250%22 y=%2265%22 text-anchor=%22middle%22 font-size=%2250%22 fill=%22white%22 font-family=%22-webkit-system-font, BlinkMacSystemFont, sans-serif%22>✓</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%2326619C%22 rx=%2220%22/><text x=%2250%22 y=%2265%22 text-anchor=%22middle%22 font-size=%2250%22 fill=%22white%22 font-family=%22-webkit-system-font, BlinkMacSystemFont, sans-serif%22>✓</text></svg>">
+    
+    <style>
+        /* iOS Color System - Light Mode */
+        :root {
+            /* Light Mode Colors */
+            --system-background: #F2F2F7;
+            --secondary-background: #FFFFFF;
+            --tertiary-background: #F2F2F7;
+            
+            --label-primary: #000000;
+            --label-secondary: #3C3C43;
+            --label-tertiary: #8E8E93;
+            
+            --accent-blue: #007AFF;
+            --lapis-lazuli: #26619C;
+            --system-green: #34C759;
+            --system-orange: #FF9500;
+            --system-red: #FF3B30;
+            --system-purple: #AF52DE;
+            --system-indigo: #5856D6;
+            
+            --separator: #C6C6C8;
+            --opaque-separator: #C6C6C8;
+            
+            --system-gray: #8E8E93;
+            --system-gray2: #AEAEB2;
+            --system-gray3: #C7C7CC;
+            --system-gray4: #D1D1D6;
+            --system-gray5: #E5E5EA;
+            --system-gray6: #F2F2F7;
+        }
+
+        /* Dark Mode Colors */
+        .dark-mode {
+            --system-background: #000000;
+            --secondary-background: #1C1C1E;
+            --tertiary-background: #2C2C2E;
+            
+            --label-primary: #FFFFFF;
+            --label-secondary: #EBEBF5;
+            --label-tertiary: #8E8E93;
+            
+            --accent-blue: #0A84FF;
+            --lapis-lazuli: #409CFF;
+            --system-green: #30D158;
+            --system-orange: #FF9F0A;
+            --system-red: #FF453A;
+            --system-purple: #BF5AF2;
+            --system-indigo: #5E5CE6;
+            
+            --separator: #38383A;
+            --opaque-separator: #38383A;
+            
+            --system-gray: #8E8E93;
+            --system-gray2: #636366;
+            --system-gray3: #48484A;
+            --system-gray4: #3A3A3C;
+            --system-gray5: #2C2C2E;
+            --system-gray6: #1C1C1E;
+        }
+
+        /* Theme-aware colors */
+        :root {
+            --card-bg: var(--secondary-background);
+            --card-border: var(--separator);
+            --input-bg: var(--tertiary-background);
+            --switch-track: var(--system-gray4);
+            --switch-thumb: white;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode {
+            --card-bg: var(--secondary-background);
+            --card-border: var(--separator);
+            --input-bg: var(--tertiary-background);
+            --switch-track: var(--system-gray3);
+            --switch-thumb: var(--label-primary);
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', sans-serif;
+            background: var(--system-background);
+            color: var(--label-primary);
+            min-height: 100vh;
+            line-height: 1.47059;
+            letter-spacing: -0.022em;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* iOS Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--system-background);
+            transition: background-color 0.3s ease;
+        }
+        
+        /* iOS Header */
+        header {
+            background: var(--secondary-background);
+            padding: 44px 20px 12px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 0.5px solid var(--separator);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode header {
+            background: rgba(28, 28, 30, 0.8);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--label-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--lapis-lazuli);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .date {
+            font-size: 15px;
+            color: var(--label-secondary);
+            font-weight: 400;
+        }
+        
+        /* Dark Mode Toggle Switch - iOS Style */
+        .theme-toggle {
+            position: relative;
+            width: 51px;
+            height: 31px;
+        }
+        
+        .theme-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--switch-track);
+            border-radius: 31px;
+            transition: .3s;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 27px;
+            width: 27px;
+            left: 2px;
+            bottom: 2px;
+            background-color: var(--switch-thumb);
+            border-radius: 50%;
+            transition: .3s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--lapis-lazuli);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+        
+        /* Sun/Moon Icons inside toggle */
+        .toggle-slider:after {
+            content: "☀️";
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        
+        input:checked + .toggle-slider:after {
+            content: "🌙";
+            left: auto;
+            right: 6px;
+        }
+        
+        /* iOS Segmented Control */
+        .segmented-control {
+            display: flex;
+            background: var(--system-gray6);
+            border-radius: 8.91px;
+            padding: 3px;
+            margin: 16px 20px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .segment {
+            flex: 1;
+            padding: 6px 16px;
+            border: none;
+            background: transparent;
+            color: var(--label-primary);
+            font-size: 13px;
+            font-weight: 590;
+            text-align: center;
+            border-radius: 6.93px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+        }
+        
+        .segment.active {
+            background: var(--card-bg);
+            box-shadow: 0px 3px 8px var(--shadow-color), 0px 3px 1px rgba(0, 0, 0, 0.04);
+            color: var(--lapis-lazuli);
+        }
+        
+        /* iOS Layout */
+        .main {
+            display: flex;
+            min-height: calc(100vh - 120px);
+        }
+        
+        @media (min-width: 769px) {
+            .sidebar {
+                width: 320px;
+                background: var(--card-bg);
+                border-right: 0.5px solid var(--card-border);
+                display: flex;
+                flex-direction: column;
+                transition: all 0.3s ease;
+            }
+            
+            .content {
+                flex: 1;
+                background: var(--system-background);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                background: var(--card-bg);
+                border-bottom: 0.5px solid var(--card-border);
+                transition: all 0.3s ease;
+            }
+            
+            .content {
+                flex: 1;
+                background: var(--system-background);
+            }
+        }
+        
+        /* iOS Content Areas */
+        .content-section {
+            padding: 20px;
+        }
+        
+        /* iOS Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            padding: 0 20px 20px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0px 0.5px 1px var(--shadow-color);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--lapis-lazuli);
+            margin: 4px 0;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--label-tertiary);
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        
+        /* iOS Form Elements */
+        .form-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            margin: 20px;
+            padding: 20px;
+            box-shadow: 0px 0.5px 1px var(--shadow-color);
+            transition: all 0.3s ease;
+        }
+        
+        .section-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--label-primary);
+            margin-bottom: 16px;
+        }
+        
+        .ios-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--input-bg);
+            border: 0.5px solid var(--separator);
+            border-radius: 8px;
+            font-size: 17px;
+            color: var(--label-primary);
+            margin-bottom: 12px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+        
+        .ios-input:focus {
+            outline: none;
+            border-color: var(--lapis-lazuli);
+        }
+        
+        select.ios-input {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238E8E93'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 20px;
+            padding-right: 44px;
+        }
+
+        .dark-mode select.ios-input {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23EBEBF5'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+        }
+        
+        /* iOS Buttons - Improved Import/Export */
+        .ios-button {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: 590;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            background: var(--lapis-lazuli);
+            color: white;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .ios-button:active {
+            transform: scale(0.98);
+            opacity: 0.8;
+        }
+        
+        .ios-button-secondary {
+            background: var(--card-bg);
+            color: var(--lapis-lazuli);
+            border: 1px solid var(--lapis-lazuli);
+        }
+
+        .ios-button-secondary:active {
+            background: var(--input-bg);
+        }
+        
+        /* iOS Action Buttons */
+        .ios-action-button {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 590;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--card-bg);
+            color: var(--lapis-lazuli);
+            border: 1px solid var(--lapis-lazuli);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .ios-action-button:active {
+            background: var(--input-bg);
+            transform: scale(0.98);
+        }
+        
+        /* iOS Habit Items */
+        .habits-list {
+            padding: 0 20px;
+        }
+        
+        .habit-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0px 0.5px 1px var(--shadow-color);
+            transition: all 0.3s ease;
+        }
+        
+        .habit-item:active {
+            transform: scale(0.98);
+            background: var(--input-bg);
+        }
+        
+        .habit-icon-container {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+            color: white;
+        }
+        
+        .habit-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .habit-name {
+            font-size: 17px;
+            font-weight: 590;
+            color: var(--label-primary);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .habit-meta {
+            font-size: 15px;
+            color: var(--label-tertiary);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .habit-streak {
+            color: var(--system-orange);
+            font-weight: 590;
+        }
+        
+        .habit-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        
+        .ios-control-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--input-bg);
+            border: 0.5px solid var(--separator);
+            color: var(--label-primary);
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .ios-control-button:active {
+            background: var(--system-gray5);
+            transform: scale(0.95);
+        }
+        
+        .ios-check-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: var(--input-bg);
+            border: 1.5px solid var(--separator);
+            color: var(--label-tertiary);
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .ios-check-button.checked {
+            background: var(--system-green);
+            border-color: var(--system-green);
+            color: white;
+        }
+        
+        /* iOS Chart */
+        .chart-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px;
+            height: 250px;
+            box-shadow: 0px 0.5px 1px var(--shadow-color);
+        }
+        
+        /* iOS Logs */
+        .log-item {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            font-size: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0px 0.5px 1px var(--shadow-color);
+        }
+        
+        .log-time {
+            font-size: 13px;
+            color: var(--label-tertiary);
+            background: var(--input-bg);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 0.5px solid var(--separator);
+        }
+        
+        /* iOS Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            backdrop-filter: blur(20px);
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 0.5px solid var(--separator);
+        }
+        
+        .modal-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--label-primary);
+        }
+        
+        .close-button {
+            background: none;
+            border: none;
+            color: var(--label-tertiary);
+            font-size: 24px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        
+        /* iOS Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--label-tertiary);
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+        
+        /* iOS Color Selection */
+        .color-section {
+            margin: 20px 0;
+        }
+        
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .color-option {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+        }
+        
+        .color-option.selected {
+            border-color: white;
+            box-shadow: 0 0 0 2px var(--lapis-lazuli), 0 2px 8px rgba(0, 0, 0, 0.15);
+            transform: scale(1.1);
+        }
+        
+        /* Unit Selection */
+        .unit-selection {
+            margin: 12px 0;
+        }
+
+        .unit-input-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .unit-input {
+            flex: 1;
+            padding: 12px;
+            background: var(--input-bg);
+            border: 0.5px solid var(--separator);
+            border-radius: 8px;
+            font-size: 15px;
+            color: var(--label-primary);
+            font-family: inherit;
+        }
+
+        .unit-input:focus {
+            outline: none;
+            border-color: var(--lapis-lazuli);
+        }
+
+        .unit-presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .unit-preset {
+            padding: 6px 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--separator);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--label-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .unit-preset:hover {
+            background: var(--input-bg);
+        }
+
+        .unit-preset.active {
+            background: var(--lapis-lazuli);
+            color: white;
+            border-color: var(--lapis-lazuli);
+        }
+        
+        /* Export Section - Improved Design */
+        .export-section {
+            padding: 20px;
+            border-top: 0.5px solid var(--separator);
+            background: var(--card-bg);
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 0;
+            background: transparent;
+        }
+        
+        /* Habit Type Badges */
+        .type-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 590;
+            letter-spacing: 0.5px;
+            margin-left: 8px;
+            text-transform: uppercase;
+        }
+        
+        .badge-check {
+            background: rgba(52, 199, 89, 0.1);
+            color: var(--system-green);
+        }
+        
+        .badge-counter {
+            background: rgba(0, 122, 255, 0.1);
+            color: var(--accent-blue);
+        }
+        
+        .badge-repetition {
+            background: rgba(255, 149, 0, 0.1);
+            color: var(--system-orange);
+        }
+
+        .dark-mode .badge-check {
+            background: rgba(48, 209, 88, 0.2);
+        }
+
+        .dark-mode .badge-counter {
+            background: rgba(10, 132, 255, 0.2);
+        }
+
+        .dark-mode .badge-repetition {
+            background: rgba(255, 159, 10, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .habit-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            
+            .habit-controls {
+                justify-content: center;
+                margin-top: 12px;
+            }
+            
+            .chart-container {
+                height: 220px;
+                margin: 16px;
+            }
+            
+            header {
+                padding-top: env(safe-area-inset-top, 44px);
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        /* Safe area for iPhone X and later */
+        @supports (padding: max(0px)) {
+            header {
+                padding-top: max(44px, env(safe-area-inset-top));
+            }
+        }
+
+        /* Smooth transitions for all theme-aware elements */
+        .stat-card,
+        .form-section,
+        .habit-item,
+        .log-item,
+        .chart-container,
+        .modal-content,
+        .export-section {
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Progress Bar for Counter Habits */
+        .progress-container {
+            height: 6px;
+            background: var(--input-bg);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 4px;
+            width: 100%;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--system-green);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">✓</div>
+                    <span>Habits</span>
+                </div>
+                <div class="header-right">
+                    <div class="date" id="currentDate"></div>
+                    <div class="theme-toggle">
+                        <input type="checkbox" id="darkModeToggle">
+                        <label for="darkModeToggle" class="toggle-slider"></label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="segmented-control">
+                <button class="segment active" onclick="showTab('tracker')">Today</button>
+                <button class="segment" onclick="showTab('analytics')">Analytics</button>
+                <button class="segment" onclick="showTab('logs')">Logs</button>
+            </div>
+        </header>
+        
+        <div class="main">
+            <div class="sidebar">
+                <!-- Creation Form -->
+                <div class="form-section">
+                    <div class="section-title">New Habit</div>
+                    
+                    <input type="text" class="ios-input" id="habitName" placeholder="What do you want to track?">
+                    <input type="text" class="ios-input" id="habitIcon" placeholder="Icon emoji" maxlength="2">
+                    
+                    <select class="ios-input" id="habitType" onchange="toggleSettings()">
+                        <option value="check">✅ Yes/No Habit</option>
+                        <option value="counter">🔢 Counter Habit</option>
+                        <option value="repetition">🔄 Repetition Habit</option>
+                    </select>
+                    
+                    <div id="counterSettings" style="display: none; margin-top: 12px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                            <div>
+                                <label style="display: block; font-size: 13px; color: var(--label-tertiary); margin-bottom: 6px;">Goal</label>
+                                <input type="number" class="ios-input" id="goalValue" value="8" min="1" step="0.1">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 13px; color: var(--label-tertiary); margin-bottom: 6px;">Increment</label>
+                                <input type="number" class="ios-input" id="incrementValue" value="1" min="0.1" step="0.1">
+                            </div>
+                        </div>
+                        <div class="unit-selection">
+                            <label style="display: block; font-size: 13px; color: var(--label-tertiary); margin-bottom: 8px;">Unit</label>
+                            <div class="unit-input-container">
+                                <input type="text" class="unit-input" id="customUnit" placeholder="Enter custom unit">
+                                <button class="ios-control-button" onclick="useCustomUnit()" style="width: auto; padding: 0 12px; font-size: 14px;">Use</button>
+                            </div>
+                            <div class="unit-presets">
+                                <div class="unit-preset" onclick="selectPresetUnit('glasses')">Glasses</div>
+                                <div class="unit-preset" onclick="selectPresetUnit('cups')">Cups</div>
+                                <div class="unit-preset" onclick="selectPresetUnit('liters')">Liters</div>
+                                <div class="unit-preset" onclick="selectPresetUnit('ml')">ML</div>
+                                <div class="unit-preset" onclick="selectPresetUnit('pages')">Pages</div>
+                                <div class="unit-preset" onclick="selectPresetUnit('minutes')">Minutes</div>
+                                <div class="unit-preset" onclick="selectPresetUnit('steps')">Steps</div>
+                                <div class="unit-preset" onclick="selectPresetUnit('kcal')">Kcal</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="repetitionSettings" style="display: none; margin-top: 12px;">
+                        <label style="display: block; font-size: 13px; color: var(--label-tertiary); margin-bottom: 6px;">Target per Day</label>
+                        <input type="number" class="ios-input" id="targetRepetitions" value="3" min="1">
+                    </div>
+                    
+                    <!-- Organized Color Selection -->
+                    <div class="color-section">
+                        <label style="display: block; font-size: 13px; color: var(--label-tertiary); margin-bottom: 12px;">Color</label>
+                        
+                        <!-- Blues -->
+                        <div class="color-category">
+                            <div class="category-label">Blues</div>
+                            <div class="color-grid" id="bluesGrid"></div>
+                        </div>
+                        
+                        <!-- Greens -->
+                        <div class="color-category">
+                            <div class="category-label">Greens</div>
+                            <div class="color-grid" id="greensGrid"></div>
+                        </div>
+                        
+                        <!-- Warm Colors -->
+                        <div class="color-category">
+                            <div class="category-label">Warm Colors</div>
+                            <div class="color-grid" id="warmGrid"></div>
+                        </div>
+                        
+                        <!-- Custom Color -->
+                        <div style="margin-top: 16px;">
+                            <label style="display: block; font-size: 13px; color: var(--label-tertiary); margin-bottom: 8px;">Custom Color</label>
+                            <input type="color" class="ios-input" id="customColorPicker" value="#26619C" style="height: 44px; padding: 4px;">
+                        </div>
+                    </div>
+                    
+                    <button class="ios-button" onclick="addHabit()">Add Habit</button>
+                </div>
+                
+                <!-- All Habits List -->
+                <div id="allHabits" class="habits-list" style="flex: 1; overflow-y: auto;">
+                    <!-- Dynamic content -->
+                </div>
+                
+                <!-- Export Buttons - Improved Design -->
+                <div class="export-section">
+                    <div class="action-buttons">
+                        <button class="ios-action-button" onclick="exportData()">
+                            <span style="font-size: 18px;">📤</span>
+                            <span>Export</span>
+                        </button>
+                        <button class="ios-action-button" onclick="importData()">
+                            <span style="font-size: 18px;">📥</span>
+                            <span>Import</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content">
+                <!-- Tracker Tab -->
+                <div id="trackerTab" class="content-section">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Current Streak</div>
+                            <div class="stat-value" id="currentStreak">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Today's Progress</div>
+                            <div class="stat-value" id="todayProgress">0%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Active Habits</div>
+                            <div class="stat-value" id="totalHabits">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Total Completions</div>
+                            <div class="stat-value" id="totalCompletions">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="section-title" style="margin: 20px 0 16px 0;">Today's Habits</div>
+                    <div id="todaysHabits" class="habits-list">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+                
+                <!-- Analytics Tab -->
+                <div id="analyticsTab" class="content-section" style="display: none;">
+                    <div class="chart-container">
+                        <canvas id="progressChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Logs Tab -->
+                <div id="logsTab" class="content-section" style="display: none;">
+                    <div class="section-title" style="margin-bottom: 16px;">Activity Logs</div>
+                    <div id="logsContainer" class="habits-list">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Edit Habit</div>
+                <button class="close-button" onclick="closeEdit()">×</button>
+            </div>
+            <div id="editForm">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Organized Color Palette
+        const colorPalette = {
+            blues: [
+                '#26619C', // Lapis Lazuli - Primary
+                '#007AFF', // iOS Blue
+                '#5AC8FA', // Light Blue
+                '#5856D6', // Indigo
+                '#AF52DE'  // Purple
+            ],
+            greens: [
+                '#34C759', // iOS Green
+                '#4CD964', // Bright Green
+                '#5AC8FA', // Teal
+                '#32D74B', // Lime
+                '#55C0AD'  // Sage
+            ],
+            warm: [
+                '#FF9500', // iOS Orange
+                '#FF3B30', // iOS Red
+                '#FF2D55', // Pink
+                '#FFCC00', // Yellow
+                '#FF9F0A'  // Dark Orange
+            ]
+        };
+
+        // Unit presets for different types of habits
+        const unitPresets = {
+            water: ['glasses', 'cups', 'liters', 'ml', 'ounces'],
+            exercise: ['minutes', 'hours', 'sets', 'reps', 'kcal'],
+            reading: ['pages', 'chapters', 'minutes', 'books'],
+            study: ['hours', 'minutes', 'topics', 'pages'],
+            work: ['hours', 'tasks', 'projects', 'meetings'],
+            health: ['steps', 'kcal', 'hours', 'times'],
+            general: ['times', 'items', 'units', 'points']
+        };
+        
+        let habits = JSON.parse(localStorage.getItem('habits')) || [];
+        let logs = JSON.parse(localStorage.getItem('logs')) || [];
+        let selectedColor = colorPalette.blues[0];
+        let selectedUnit = 'glasses';
+        let editingId = null;
+        let isDarkMode = localStorage.getItem('darkMode') === 'true' || 
+                         (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial theme
+            updateTheme();
+            
+            // Setup dark mode toggle
+            const toggle = document.getElementById('darkModeToggle');
+            toggle.checked = isDarkMode;
+            toggle.addEventListener('change', function() {
+                isDarkMode = this.checked;
+                localStorage.setItem('darkMode', isDarkMode);
+                updateTheme();
+                updateChart();
+            });
+            
+            updateDate();
+            setupColorGrids();
+            loadAll();
+            
+            // Setup custom color picker
+            document.getElementById('customColorPicker').addEventListener('input', function(e) {
+                selectedColor = e.target.value;
+                document.querySelectorAll('.color-option.selected').forEach(el => {
+                    el.classList.remove('selected');
+                });
+            });
+
+            // Setup unit presets
+            setupUnitPresets();
+            
+            // Add better sample data
+            if (habits.length === 0) {
+                habits = [
+                    { 
+                        id: 1, 
+                        name: "Morning Meditation", 
+                        icon: "🧘", 
+                        color: colorPalette.greens[0],
+                        type: "check", 
+                        streak: 5, 
+                        history: [
+                            { date: new Date(Date.now() - 86400000).toDateString() },
+                            { date: new Date(Date.now() - 86400000 * 2).toDateString() },
+                            { date: new Date(Date.now() - 86400000 * 3).toDateString() },
+                            { date: new Date(Date.now() - 86400000 * 4).toDateString() },
+                            { date: new Date(Date.now() - 86400000 * 5).toDateString() }
+                        ],
+                        createdAt: new Date().toISOString()
+                    },
+                    { 
+                        id: 2, 
+                        name: "Drink Water", 
+                        icon: "💧", 
+                        color: colorPalette.blues[0],
+                        type: "counter", 
+                        goal: 8, 
+                        current: 4, 
+                        increment: 0.5, 
+                        unit: "glasses", 
+                        streak: 3, 
+                        history: [
+                            { date: new Date().toDateString(), value: 4 },
+                            { date: new Date(Date.now() - 86400000).toDateString(), value: 8 },
+                            { date: new Date(Date.now() - 86400000 * 2).toDateString(), value: 8 },
+                            { date: new Date(Date.now() - 86400000 * 3).toDateString(), value: 8 }
+                        ],
+                        createdAt: new Date().toISOString()
+                    },
+                    { 
+                        id: 3, 
+                        name: "Daily Exercise", 
+                        icon: "💪", 
+                        color: colorPalette.warm[0],
+                        type: "repetition", 
+                        targetRepetitions: 3, 
+                        current: 1, 
+                        streak: 2, 
+                        history: [
+                            { date: new Date().toDateString(), count: 1 },
+                            { date: new Date(Date.now() - 86400000).toDateString(), count: 3 },
+                            { date: new Date(Date.now() - 86400000 * 2).toDateString(), count: 3 }
+                        ],
+                        createdAt: new Date().toISOString()
+                    },
+                    { 
+                        id: 4, 
+                        name: "Read Books", 
+                        icon: "📚", 
+                        color: colorPalette.purple || '#AF52DE',
+                        type: "counter", 
+                        goal: 20, 
+                        current: 15, 
+                        increment: 1, 
+                        unit: "pages", 
+                        streak: 7, 
+                        history: [
+                            { date: new Date().toDateString(), value: 15 },
+                            { date: new Date(Date.now() - 86400000).toDateString(), value: 20 },
+                            { date: new Date(Date.now() - 86400000 * 2).toDateString(), value: 20 },
+                            { date: new Date(Date.now() - 86400000 * 3).toDateString(), value: 20 },
+                            { date: new Date(Date.now() - 86400000 * 4).toDateString(), value: 20 },
+                            { date: new Date(Date.now() - 86400000 * 5).toDateString(), value: 20 },
+                            { date: new Date(Date.now() - 86400000 * 6).toDateString(), value: 20 },
+                            { date: new Date(Date.now() - 86400000 * 7).toDateString(), value: 20 }
+                        ],
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                save();
+            }
+        });
+
+        function setupUnitPresets() {
+            // Select first unit preset by default
+            selectPresetUnit('glasses');
+        }
+        
+        function updateTheme() {
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', '#1C1C1E');
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', '#26619C');
+            }
+        }
+        
+        function save() {
+            localStorage.setItem('habits', JSON.stringify(habits));
+            localStorage.setItem('logs', JSON.stringify(logs));
+        }
+        
+        function loadAll() {
+            loadHabits();
+            loadToday();
+            updateStats();
+            loadChart();
+            loadLogs();
+        }
+        
+        function updateDate() {
+            const now = new Date();
+            document.getElementById('currentDate').textContent = 
+                now.toLocaleDateString('en-US', { 
+                    weekday: 'long',
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+        }
+        
+        function showTab(tab) {
+            // Hide all tabs
+            ['tracker', 'analytics', 'logs'].forEach(t => {
+                document.getElementById(t + 'Tab').style.display = 'none';
+            });
+            
+            // Remove active class from segments
+            document.querySelectorAll('.segment').forEach(s => s.classList.remove('active'));
+            
+            // Show selected tab and activate segment
+            document.getElementById(tab + 'Tab').style.display = 'block';
+            event.target.classList.add('active');
+            
+            if (tab === 'analytics') {
+                setTimeout(loadChart, 10);
+            }
+        }
+        
+        function setupColorGrids() {
+            // Setup blues grid
+            const bluesGrid = document.getElementById('bluesGrid');
+            bluesGrid.innerHTML = colorPalette.blues.map(color => 
+                `<div class="color-option" style="background: ${color}" onclick="selectColor('${color}')" id="color-${color}"></div>`
+            ).join('');
+            
+            // Setup greens grid
+            const greensGrid = document.getElementById('greensGrid');
+            greensGrid.innerHTML = colorPalette.greens.map(color => 
+                `<div class="color-option" style="background: ${color}" onclick="selectColor('${color}')" id="color-${color}"></div>`
+            ).join('');
+            
+            // Setup warm colors grid
+            const warmGrid = document.getElementById('warmGrid');
+            warmGrid.innerHTML = colorPalette.warm.map(color => 
+                `<div class="color-option" style="background: ${color}" onclick="selectColor('${color}')" id="color-${color}"></div>`
+            ).join('');
+            
+            // Select default color
+            selectColor(colorPalette.blues[0]);
+        }
+        
+        function selectColor(color) {
+            selectedColor = color;
+            
+            // Clear all selections
+            document.querySelectorAll('.color-option.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Select new color
+            const element = document.getElementById(`color-${color}`);
+            if (element) {
+                element.classList.add('selected');
+                // Update custom color picker
+                document.getElementById('customColorPicker').value = color;
+            }
+        }
+        
+        function toggleSettings() {
+            const type = document.getElementById('habitType').value;
+            document.getElementById('counterSettings').style.display = type === 'counter' ? 'block' : 'none';
+            document.getElementById('repetitionSettings').style.display = type === 'repetition' ? 'block' : 'none';
+        }
+        
+        function selectPresetUnit(unit) {
+            selectedUnit = unit;
+            document.getElementById('customUnit').value = unit;
+            
+            // Update active state
+            document.querySelectorAll('.unit-preset').forEach(preset => {
+                preset.classList.remove('active');
+            });
+            
+            // Find and activate the clicked preset
+            const clickedPreset = Array.from(document.querySelectorAll('.unit-preset')).find(p => 
+                p.textContent.toLowerCase() === unit.toLowerCase()
+            );
+            if (clickedPreset) {
+                clickedPreset.classList.add('active');
+            }
+        }
+
+        function useCustomUnit() {
+            const customUnit = document.getElementById('customUnit').value.trim();
+            if (customUnit) {
+                selectedUnit = customUnit;
+                
+                // Clear active state from presets
+                document.querySelectorAll('.unit-preset').forEach(preset => {
+                    preset.classList.remove('active');
+                });
+            }
+        }
+        
+        // Habit functions
+        function addHabit() {
+            const name = document.getElementById('habitName').value.trim();
+            const icon = document.getElementById('habitIcon').value.trim() || '⭐';
+            const type = document.getElementById('habitType').value;
+            
+            if (!name) {
+                alert('Please enter a habit name');
+                return;
+            }
+            
+            const habit = {
+                id: Date.now(),
+                name: name,
+                icon: icon,
+                color: selectedColor,
+                type: type,
+                streak: 0,
+                history: [],
+                createdAt: new Date().toISOString()
+            };
+            
+            if (type === 'counter') {
+                habit.goal = parseFloat(document.getElementById('goalValue').value) || 8;
+                habit.increment = parseFloat(document.getElementById('incrementValue').value) || 1;
+                habit.unit = selectedUnit;
+                habit.current = 0;
+            } else if (type === 'repetition') {
+                habit.targetRepetitions = parseInt(document.getElementById('targetRepetitions').value) || 3;
+                habit.current = 0;
+            }
+            
+            habits.push(habit);
+            save();
+            loadAll();
+            
+            // Clear form
+            document.getElementById('habitName').value = '';
+            document.getElementById('habitIcon').value = '';
+            
+            // Provide haptic feedback if available
+            if (window.navigator.vibrate) {
+                window.navigator.vibrate(50);
+            }
+            
+            addLog(`Created: ${name}`);
+        }
+        
+        function loadHabits() {
+            const container = document.getElementById('allHabits');
+            
+            if (habits.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><p>No habits yet</p></div>';
+                return;
+            }
+            
+            // Sort by creation date (newest first)
+            const sortedHabits = [...habits].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            container.innerHTML = sortedHabits.map(habit => `
+                <div class="habit-item">
+                    <div class="habit-icon-container" style="background: ${habit.color}">${habit.icon}</div>
+                    <div class="habit-info">
+                        <div class="habit-name">${habit.name}</div>
+                        <div class="habit-meta">
+                            <span class="habit-streak">🔥 ${habit.streak}</span>
+                            <span class="type-badge badge-${habit.type}">${habit.type}</span>
+                        </div>
+                    </div>
+                    <div class="habit-controls">
+                        <button class="ios-control-button" onclick="editHabit(${habit.id})">✏️</button>
+                        <button class="ios-control-button" onclick="deleteHabit(${habit.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function loadToday() {
+            const container = document.getElementById('todaysHabits');
+            const today = new Date().toDateString();
+            
+            container.innerHTML = habits.map(habit => {
+                const entry = habit.history.find(h => h.date === today);
+                let current = 0;
+                let isCompleted = false;
+                
+                if (habit.type === 'check') {
+                    isCompleted = !!entry;
+                } else if (habit.type === 'counter') {
+                    current = entry ? entry.value : 0;
+                    isCompleted = current >= habit.goal;
+                } else if (habit.type === 'repetition') {
+                    current = entry ? entry.count : 0;
+                    isCompleted = current >= habit.targetRepetitions;
+                }
+                
+                const progressPercent = habit.type === 'counter' ? (current / habit.goal) * 100 : 
+                                      habit.type === 'repetition' ? (current / habit.targetRepetitions) * 100 : 0;
+                
+                return `
+                    <div class="habit-item">
+                        <div class="habit-icon-container" style="background: ${habit.color}">${habit.icon}</div>
+                        <div class="habit-info">
+                            <div class="habit-name">${habit.name}</div>
+                            <div class="habit-meta">
+                                <span class="habit-streak">🔥 ${habit.streak}</span>
+                                ${habit.type === 'counter' ? `
+                                    <span>${current.toFixed(1)}/${habit.goal} ${habit.unit}</span>
+                                    <div class="progress-container">
+                                        <div class="progress-bar" style="width: ${Math.min(progressPercent, 100)}%"></div>
+                                    </div>
+                                ` : ''}
+                                ${habit.type === 'repetition' ? `
+                                    <span>${current}/${habit.targetRepetitions} times</span>
+                                    <div class="progress-container">
+                                        <div class="progress-bar" style="width: ${Math.min(progressPercent, 100)}%"></div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <div class="habit-controls">
+                            ${habit.type === 'counter' ? `
+                                <button class="ios-control-button" onclick="updateCounter(${habit.id}, -${habit.increment})">−</button>
+                                <button class="ios-control-button" onclick="updateCounter(${habit.id}, ${habit.increment})">+</button>
+                                <button class="ios-check-button ${isCompleted ? 'checked' : ''}" onclick="completeCounter(${habit.id})">
+                                    ${isCompleted ? '✓' : '○'}
+                                </button>
+                            ` : ''}
+                            ${habit.type === 'repetition' ? `
+                                <button class="ios-control-button" onclick="updateRep(${habit.id}, -1)">−</button>
+                                <button class="ios-control-button" onclick="updateRep(${habit.id}, 1)">+</button>
+                                <button class="ios-check-button ${isCompleted ? 'checked' : ''}" onclick="completeRep(${habit.id})">
+                                    ${isCompleted ? '✓' : '○'}
+                                </button>
+                            ` : ''}
+                            ${habit.type === 'check' ? `
+                                <button class="ios-check-button ${isCompleted ? 'checked' : ''}" onclick="completeCheck(${habit.id})">
+                                    ${isCompleted ? '✓' : '○'}
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Update functions - FIXED: Now properly updates completion state
+        function updateCounter(id, amount) {
+            const habit = habits.find(h => h.id === id);
+            if (!habit || habit.type !== 'counter') return;
+            
+            const today = new Date().toDateString();
+            let entry = habit.history.find(h => h.date === today);
+            
+            if (!entry) {
+                entry = { date: today, value: 0 };
+                habit.history.push(entry);
+            }
+            
+            entry.value = Math.max(0, (entry.value || 0) + amount);
+            entry.value = Math.round(entry.value * 10) / 10;
+            
+            // Update streak if goal reached
+            if (entry.value >= habit.goal) {
+                updateStreak(habit);
+            }
+            
+            // Update current value for display
+            habit.current = entry.value;
+            
+            save();
+            loadToday();
+            updateStats();
+            addLog(`${amount > 0 ? '➕' : '➖'} ${habit.name}: ${entry.value.toFixed(1)}/${habit.goal} ${habit.unit}`);
+        }
+        
+        function completeCounter(id) {
+            const habit = habits.find(h => h.id === id);
+            if (!habit) return;
+            
+            const today = new Date().toDateString();
+            let entry = habit.history.find(h => h.date === today);
+            
+            if (!entry) {
+                entry = { date: today, value: habit.goal };
+                habit.history.push(entry);
+            } else {
+                entry.value = habit.goal;
+            }
+            
+            updateStreak(habit);
+            habit.current = habit.goal;
+            save();
+            loadToday();
+            updateStats();
+            addLog(`✅ ${habit.name} completed!`);
+        }
+        
+        function updateRep(id, amount) {
+            const habit = habits.find(h => h.id === id);
+            if (!habit || habit.type !== 'repetition') return;
+            
+            const today = new Date().toDateString();
+            let entry = habit.history.find(h => h.date === today);
+            
+            if (!entry) {
+                entry = { date: today, count: 0 };
+                habit.history.push(entry);
+            }
+            
+            entry.count = Math.max(0, (entry.count || 0) + amount);
+            
+            // Update streak if target reached
+            if (entry.count >= habit.targetRepetitions) {
+                updateStreak(habit);
+            }
+            
+            // Update current value for display
+            habit.current = entry.count;
+            
+            save();
+            loadToday();
+            updateStats();
+            addLog(`${amount > 0 ? '🔁' : '➖'} ${habit.name}: ${entry.count}/${habit.targetRepetitions} times`);
+        }
+        
+        function completeRep(id) {
+            const habit = habits.find(h => h.id === id);
+            if (!habit) return;
+            
+            const today = new Date().toDateString();
+            let entry = habit.history.find(h => h.date === today);
+            
+            if (!entry) {
+                entry = { date: today, count: habit.targetRepetitions };
+                habit.history.push(entry);
+            } else {
+                entry.count = habit.targetRepetitions;
+            }
+            
+            updateStreak(habit);
+            habit.current = habit.targetRepetitions;
+            save();
+            loadToday();
+            updateStats();
+            addLog(`✅ ${habit.name} completed!`);
+        }
+        
+        function completeCheck(id) {
+            const habit = habits.find(h => h.id === id);
+            if (!habit || habit.type !== 'check') return;
+            
+            const today = new Date().toDateString();
+            let entry = habit.history.find(h => h.date === today);
+            
+            if (!entry) {
+                habit.history.push({ date: today });
+                updateStreak(habit);
+                save();
+                loadToday();
+                updateStats();
+                addLog(`✅ ${habit.name}`);
+            } else {
+                // If already checked, uncheck it
+                habit.history = habit.history.filter(h => h.date !== today);
+                updateStreak(habit);
+                save();
+                loadToday();
+                updateStats();
+                addLog(`❌ ${habit.name} unchecked`);
+            }
+        }
+        
+        function updateStreak(habit) {
+            const dates = habit.history
+                .map(h => new Date(h.date))
+                .sort((a, b) => b - a);
+            
+            let streak = 0;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            for (let i = 0; i < dates.length; i++) {
+                const date = dates[i];
+                const expected = new Date(today);
+                expected.setDate(today.getDate() - i);
+                expected.setHours(0, 0, 0, 0);
+                
+                if (date.getTime() === expected.getTime()) {
+                    streak++;
+                } else {
+                    break;
+                }
+            }
+            
+            habit.streak = streak;
+        }
+        
+        function updateStats() {
+            const today = new Date().toDateString();
+            const completed = habits.filter(habit => {
+                const entry = habit.history.find(h => h.date === today);
+                if (habit.type === 'check') return !!entry;
+                if (habit.type === 'counter') return entry && entry.value >= habit.goal;
+                if (habit.type === 'repetition') return entry && entry.count >= habit.targetRepetitions;
+                return false;
+            }).length;
+            
+            const total = habits.length;
+            const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+            const streak = Math.max(...habits.map(h => h.streak), 0);
+            const completions = habits.reduce((sum, h) => sum + h.history.length, 0);
+            
+            document.getElementById('currentStreak').textContent = streak;
+            document.getElementById('todayProgress').textContent = progress + '%';
+            document.getElementById('totalHabits').textContent = total;
+            document.getElementById('totalCompletions').textContent = completions;
+        }
+        
+        function loadChart() {
+            const ctx = document.getElementById('progressChart')?.getContext('2d');
+            if (!ctx) return;
+            
+            if (window.chartInstance) {
+                window.chartInstance.destroy();
+            }
+            
+            // Last 7 days
+            const labels = [];
+            const data = [];
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toDateString();
+                labels.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+                
+                const completions = habits.reduce((sum, habit) => 
+                    sum + (habit.history.some(h => h.date === dateStr) ? 1 : 0), 0
+                );
+                data.push(completions);
+            }
+            
+            const textColor = isDarkMode ? '#EBEBF5' : '#8E8E93';
+            const gridColor = isDarkMode ? 'rgba(235, 235, 245, 0.1)' : 'rgba(142, 142, 147, 0.1)';
+            const accentColor = isDarkMode ? '#409CFF' : '#26619C';
+            const backgroundColor = isDarkMode ? 'rgba(64, 156, 255, 0.1)' : 'rgba(38, 97, 156, 0.1)';
+            
+            window.chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Daily Completions',
+                        data: data,
+                        borderColor: accentColor,
+                        backgroundColor: backgroundColor,
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { 
+                            display: false 
+                        } 
+                    },
+                    scales: {
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { color: textColor } 
+                        },
+                        y: { 
+                            beginAtZero: true, 
+                            max: habits.length,
+                            ticks: { 
+                                color: textColor,
+                                stepSize: 1
+                            },
+                            grid: { color: gridColor }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateChart() {
+            if (window.chartInstance) {
+                loadChart();
+            }
+        }
+        
+        function addLog(message) {
+            logs.unshift({
+                id: Date.now(),
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                date: new Date().toLocaleDateString([], { month: 'short', day: 'numeric' }),
+                message: message
+            });
+            
+            if (logs.length > 50) logs = logs.slice(0, 50);
+            save();
+            loadLogs();
+        }
+        
+        function loadLogs() {
+            const container = document.getElementById('logsContainer');
+            
+            if (logs.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">📄</div><p>No activity logs yet</p></div>';
+                return;
+            }
+            
+            container.innerHTML = logs.map(log => `
+                <div class="log-item">
+                    <div>${log.message}</div>
+                    <div class="log-time">${log.date} ${log.time}</div>
+                </div>
+            `).join('');
+        }
+        
+        // Edit/Delete functions
+        function editHabit(id) {
+            const habit = habits.find(h => h.id === id);
+            if (!habit) return;
+            
+            editingId = id;
+            
+            let form = `
+                <input type="text" class="ios-input" id="editName" value="${habit.name}" placeholder="Habit name">
+                <input type="text" class="ios-input" id="editIcon" value="${habit.icon}" placeholder="Icon emoji" maxlength="2" style="margin-top: 12px;">
+                <input type="color" class="ios-input" id="editColor" value="${habit.color}" style="height: 44px; margin-top: 12px;">`;
+            
+            if (habit.type === 'counter') {
+                form += `
+                    <input type="number" class="ios-input" id="editGoal" value="${habit.goal}" placeholder="Goal" style="margin-top: 12px;">
+                    <input type="number" class="ios-input" id="editIncrement" value="${habit.increment}" placeholder="Increment" style="margin-top: 12px;">
+                    <div style="margin-top: 12px;">
+                        <label style="display: block; font-size: 13px; color: var(--label-tertiary); margin-bottom: 6px;">Unit</label>
+                        <input type="text" class="ios-input" id="editUnit" value="${habit.unit}" placeholder="Unit">
+                    </div>`;
+            } else if (habit.type === 'repetition') {
+                form += `<input type="number" class="ios-input" id="editTarget" value="${habit.targetRepetitions}" placeholder="Target" style="margin-top: 12px;">`;
+            }
+            
+            form += `<button class="ios-button" onclick="saveEdit()" style="margin-top: 20px;">Save Changes</button>`;
+            
+            document.getElementById('editForm').innerHTML = form;
+            document.getElementById('editModal').style.display = 'flex';
+        }
+        
+        function saveEdit() {
+            const habit = habits.find(h => h.id === editingId);
+            if (!habit) return;
+            
+            habit.name = document.getElementById('editName').value.trim();
+            habit.icon = document.getElementById('editIcon').value.trim();
+            habit.color = document.getElementById('editColor').value;
+            
+            if (habit.type === 'counter') {
+                habit.goal = parseFloat(document.getElementById('editGoal').value);
+                habit.increment = parseFloat(document.getElementById('editIncrement').value);
+                habit.unit = document.getElementById('editUnit').value.trim();
+            } else if (habit.type === 'repetition') {
+                habit.targetRepetitions = parseInt(document.getElementById('editTarget').value);
+            }
+            
+            save();
+            loadAll();
+            closeEdit();
+            addLog(`Edited: ${habit.name}`);
+        }
+        
+        function closeEdit() {
+            document.getElementById('editModal').style.display = 'none';
+            editingId = null;
+        }
+        
+        function deleteHabit(id) {
+            if (confirm('Delete this habit?')) {
+                habits = habits.filter(h => h.id !== id);
+                save();
+                loadAll();
+                addLog('Deleted a habit');
+            }
+        }
+        
+        // Export/Import - Improved
+        function exportData() {
+            const data = { 
+                habits: habits, 
+                logs: logs, 
+                exportedAt: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `habits-${new Date().toISOString().split('T')[0]}.json`;
+            
+            // Trigger download
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            URL.revokeObjectURL(url);
+            
+            // Show success message
+            alert('Data exported successfully!');
+            addLog('Exported all data');
+        }
+        
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = e => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        if (!data.habits || !Array.isArray(data.habits)) {
+                            throw new Error('Invalid file format');
+                        }
+                        
+                        if (confirm('Replace all current data with imported data?')) {
+                            habits = data.habits;
+                            logs = data.logs || [];
+                            save();
+                            loadAll();
+                            
+                            // Show success message
+                            alert('Data imported successfully!');
+                            addLog('Imported data from backup');
+                        }
+                    } catch (err) {
+                        alert('Error: Invalid file format. Please select a valid habits backup file.');
+                        console.error(err);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+        
+        // Close modal on outside click
+        document.getElementById('editModal').addEventListener('click', function(e) {
+            if (e.target === this) closeEdit();
+        });
+        
+        // Handle Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('editModal').style.display === 'flex') {
+                closeEdit();
+            }
+        });
+    </script>
+</body>
+</html>
